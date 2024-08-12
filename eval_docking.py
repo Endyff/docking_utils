@@ -65,6 +65,7 @@ if __name__ == '__main__':
     data_df = pd.read_csv(args.csv)
     out_df = data_df.copy()
     rmsds = []
+    mean_rmsds = []
     for i, row in data_df.iterrows():
 
         path_true, path_pred, path_cond = row['path_true'], row['path_pred'], row['path_cond']
@@ -73,6 +74,7 @@ if __name__ == '__main__':
         rmsd = calculate_symmrmsd(mol_pred, mol_true)
         rmsds.append(rmsd)
         mean_rmsd = calculate_geometric_center_dist(mol_pred, mol_true)
+        mean_rmsds.append(mean_rmsd)
 
     if args.pb_check:
         pb = PoseBusters()
@@ -88,5 +90,6 @@ if __name__ == '__main__':
         out_df = out_df.merge(pb_results, left_on='path_pred', right_on='file')
         print(out_df)
     out_df['rmsd'] = rmsds
+    out_df['mean_rmsd'] = mean_rmsds
     out_df.to_csv(args.output, index=False)
     # data_df.to_csv('posebusters_benchmark_set_diffdock_rmsd.csv', index=False)
